@@ -14,7 +14,7 @@
 
 package main
 
-import "github.com/margic/ranchhand/cmd"
+import "github.com/margic/awsranchhand/cmd"
 
 func main() {
 	cmd.Execute()
