@@ -7,8 +7,6 @@ dependencies:
     # Get the go junit report generator
     - rm -rf ~/.go_workspace
     - go get -u github.com/jstemmer/go-junit-report
-  post:
-    - ./goscratch
 
 test:
   override:
