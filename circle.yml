@@ -1,0 +1,27 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  pre:
+    # Get the go junit report generator
+    - rm -rf ~/.go_workspace
+    - go get -u github.com/jstemmer/go-junit-report
+  post:
+    - ./goscratch
+
+test:
+  override:
+    # run the tests and output a junit style report in the circle folder
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit
+    - go test -v ./... | go-junit-report > $CIRCLE_TEST_REPORTS/junit/test-results.xml
+
+deployment:
+  hub:
+    branch: master
+    commands:
+      # Build the builder image
+      - make builddocker
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      # no need to push every time for testing build.
+      - docker push pcrofts/awsranchhand
