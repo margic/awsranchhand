@@ -1,0 +1,9 @@
+# Create a minimal container to run a Golang static binary
+FROM scratch
+
+COPY ranchhand.yml /ranchhand.yml
+
+ADD awsranchhand /
+
+ENTRYPOINT ["./awsranchhand"]
+CMD ["--help"]

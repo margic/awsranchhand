@@ -1,0 +1,12 @@
+FROM golang:1.7.3
+
+RUN mkdir -p /go/src/github.com/margic/awsranchhand
+WORKDIR /go/src/github.com/margic/awsranchhand
+
+CMD ["/bin/true"]
+
+COPY . /go/src/github.com/margic/awsranchhand
+
+RUN go get ./...
+
+RUN CGO_ENABLED=0 go build -o /go/bin/awsranchhand
