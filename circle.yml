@@ -22,7 +22,7 @@ checkout:
 
 dependencies:
   pre:
-    - "$SRC_DIR"/scripts/install_golang ~/download_cache
+    - $SRC_DIR/scripts/install_golang ~/download_cache
     - $SRC_DIR/scripts/install_glide  ~/download_cache
     - go get -u github.com/jstemmer/go-junit-report
   cache_directories:
