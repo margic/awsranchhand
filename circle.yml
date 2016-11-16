@@ -1,14 +1,42 @@
 machine:
+  pre:
+    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+  environment:
+    MODULE_NAME: awsranchhand
+    AWS_ACCESS_KEY_ID: 1
+    AWS_SECRET_ACCESS_KEY: 1
+    DOCKER_IMAGE: pcrofts/$MODULE_NAME
+    GOPATH: $HOME/.go_workspace
+    PATH: $GOPATH/bin:$PATH
+    SRC_PATH: $GOPATH/src/github.com/margic
+    SRC_DIR: $ZENPATH/$MODULE_NAME
   services:
     - docker
 
+checkout:
+  post:
+    - rm -rf $SRC_PATH
+    - mkdir -p "$SRC_PATH"
+    - cp -R ~/$MODULE_NAME "$SRC_DIR"
+    - mkdir -p ~/download_cache
+
 dependencies:
   pre:
+    - git clone --single-branch --depth 1 git@github.com:zencoder/bolt-ops.git ~/ops
+    - ~/ops/circle_steps/install_golang ~/download_cache
+    - ~/ops/circle_steps/install_glide  ~/download_cache
     # Get the go junit report generator
-    - rm -rf ~/.go_workspace
     - go get -u github.com/jstemmer/go-junit-report
+  cache_directories:
+    - "~/download_cache"
+    - "~/gocode/bin"
+  override:
+    - docker info
+    - cd "$SRC_DIR"  && glide install
 
 test:
+  pre:
+    - cd "$SRC_DIR" && make builddocker
   override:
     # run the tests and output a junit style report in the circle folder
     - mkdir -p $CIRCLE_TEST_REPORTS/junit
