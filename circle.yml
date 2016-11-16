@@ -9,7 +9,7 @@ machine:
     GOPATH: $HOME/.go_workspace
     PATH: $GOPATH/bin:$PATH
     SRC_PATH: $GOPATH/src/github.com/margic
-    SRC_DIR: $ZENPATH/$MODULE_NAME
+    SRC_DIR: $SRC_PATH/$MODULE_NAME
   services:
     - docker
 
@@ -47,7 +47,7 @@ deployment:
     branch: master
     commands:
       # Build the builder image
-      - make builddocker
+      - docker tag $MODULE_NAME $DOCKER_IMAGE:latest
+      - docker tag $MODULE_NAME $DOCKER_IMAGE:$CIRCLE_SHA1
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      # no need to push every time for testing build.
       - docker push pcrofts/awsranchhand
