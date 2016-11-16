@@ -73,8 +73,8 @@ func initConfig() {
 	viper.AddConfigPath("$HOME/.ranchhand")
 	viper.AddConfigPath("./")
 
-	viper.BindEnv("key", "RANCHER_KEY") // need to bind name key to env KEY
-	viper.BindEnv("secret", "RANCHER_SECRET")
+	viper.BindEnv("rancherKey", "RANCHER_KEY") // need to bind name key to env KEY
+	viper.BindEnv("rancherSecret", "RANCHER_SECRET")
 	viper.BindEnv("url", "RANCHER_URL")
 	viper.BindEnv("logginglevel", "LOGGING_LEVEL")
 

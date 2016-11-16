@@ -22,6 +22,7 @@ checkout:
 
 dependencies:
   pre:
+    - chmod +x $SRC_DIR/scripts/install_golang && chmod +x $SRC_DIR/scripts/install_glide
     - $SRC_DIR/scripts/install_golang ~/download_cache
     - $SRC_DIR/scripts/install_glide  ~/download_cache
     # Get the go junit report generator
