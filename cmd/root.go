@@ -33,7 +33,7 @@ var RootCmd = &cobra.Command{
 	Long:  `Ranch hand is a set of cli tools for supporting a rancher cluster`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+	//Run: func(cmd *cobra.Command, args []string) { }
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
@@ -50,26 +50,15 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports Persistent Flags, which, if defined here,
 	// will be global for your application.
-	log.Debug("Adding Flags")
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ranchhand.yml)")
 	RootCmd.PersistentFlags().StringP("rancherKey", "k", "", "Rancher API key")
 	RootCmd.PersistentFlags().StringP("rancherSecret", "s", "", "Rancher api secret")
-	viper.BindPFlag("rancherKey", RootCmd.Flags().Lookup("rancherKey"))
-	viper.BindPFlag("rancherSecret", RootCmd.Flags().Lookup("rancherSecret"))
+	viper.BindPFlags(RootCmd.PersistentFlags())
+	//viper.BindPFlag("rancherKey", RootCmd.Flags().Lookup("rancherKey"))
+	//viper.BindPFlag("rancherSecret", RootCmd.Flags().Lookup("rancherSecret"))
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	// RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	// log.Debug("Rancher Key: ", viper.GetString("rancherKey"))
-	// rancherSecret := viper.GetString("rancherSecret")
-	// // mask the key for debug output
-	// l := len(rancherSecret) - 10
-	// if l > 0 {
-	// 	rp := strings.Repeat("*", l)
-	// 	replacer := strings.NewReplacer(rancherSecret[0:l], rp)
-	// 	log.Debug("Rancher Secret: ", replacer.Replace(rancherSecret))
-	// } else {
-	// 	log.Debug("Rancher Secret value is less than 10 chars cannot be valid value: ", rancherSecret)
-	// }
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -100,5 +89,17 @@ func initConfig() {
 		log.SetLevel(level)
 		log.Debug("Logging level: ", level)
 		log.Debug("Using config file: ", viper.ConfigFileUsed())
+	}
+
+	log.Debug("Rancher Key: ", viper.GetString("rancherKey"))
+	rancherSecret := viper.GetString("rancherSecret")
+	// mask the key for debug output
+	l := len(rancherSecret) - 10
+	if l > 0 {
+		rp := strings.Repeat("*", l)
+		replacer := strings.NewReplacer(rancherSecret[0:l], rp)
+		log.Debug("Rancher Secret: ", replacer.Replace(rancherSecret))
+	} else {
+		log.Debug("Rancher Secret value is less than 10 chars cannot be valid value: ", rancherSecret)
 	}
 }
