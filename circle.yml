@@ -22,8 +22,8 @@ checkout:
 
 dependencies:
   pre:
-    - $SRC_DIR/scripts/install_golang.sh ~/download_cache
-    - $SRC_DIR/scripts/install_glide.sh  ~/download_cache
+    - $SRC_DIR/scripts/install_golang ~/download_cache
+    - $SRC_DIR/scripts/install_glide  ~/download_cache
     # Get the go junit report generator
     - go get -u github.com/jstemmer/go-junit-report
   cache_directories:
