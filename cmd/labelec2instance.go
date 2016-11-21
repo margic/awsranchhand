@@ -23,8 +23,12 @@ import (
 var labelec2instanceCmd = &cobra.Command{
 	Use:   "labelec2instance",
 	Short: "Label Rancher host with EC2 Instance ID",
-	Long: ` This command uses the aws ec2 meta service to look up the instance
-	id for this host and create a label on the rancher host with that value`,
+	Long: ` This command uses the aws ec2 meta service and rancher meta service
+	to look up the instance id for this host and create a label on the rancher
+	host with that value
+
+	Given the use of the meta service this command will only work if run in a
+	container on rancher that is on an EC2 instance`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("labelec2instance called")

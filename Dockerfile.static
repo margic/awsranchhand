@@ -3,6 +3,7 @@ FROM scratch
 
 COPY ranchhand.yml /ranchhand.yml
 
+ADD ca-certificates.crt /etc/ssl/certs/
 ADD awsranchhand /
 
 ENTRYPOINT ["./awsranchhand"]
