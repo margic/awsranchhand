@@ -66,9 +66,10 @@ func listHosts() {
 
 	for _, host := range hosts {
 		log.WithFields(log.Fields{
-			"ID":   host.Id,
-			"Info": host.Info,
-			"Data": host.Data,
+			"ID":    host.Id,
+			"Info":  host.Info,
+			"Data":  host.Data,
+			"State": host.State,
 		}).Info("Host")
 	}
 }
