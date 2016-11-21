@@ -17,7 +17,6 @@ package cmd
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // labelec2instanceCmd represents the labelec2instance command
@@ -33,13 +32,16 @@ var labelec2instanceCmd = &cobra.Command{
 		if err != nil {
 			log.Error("Unable to lookup instanceID from ec2 meta service")
 		}
-
+		hostID, err := lookupRancherHostID()
+		if err != nil {
+			log.Error("Unable to lookup rancher host id from rancher meta service")
+		}
 		req := labelRequest{
-			Host:   viper.GetString("host"),
+			Host:   "1h" + hostID,
 			Key:    "isntance-id",
 			Value:  instanceID,
-			Add:    viper.GetBool("add"),
-			Remove: viper.GetBool("remove"),
+			Add:    true,
+			Remove: false,
 		}
 
 		err = labelHost(req)

@@ -62,3 +62,18 @@ func doRancherPut(url string, body io.Reader) error {
 	}).Debug("Response")
 	return nil
 }
+
+func lookupRancherHostID() (instanceID string, err error) {
+	metaServiceURL := viper.GetString("rancherHostMetaServiceURL")
+	log.WithField("rancherHostMetaServiceURL", metaServiceURL).Debug("Url")
+	resp, err := http.Get(metaServiceURL)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	contents, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(contents), nil
+}

@@ -9,8 +9,8 @@ import (
 )
 
 func lookupInstanceID() (instanceID string, err error) {
-	metaServiceURL := viper.GetString("metaServiceURL")
-	log.WithField("instanceMetaUrl", metaServiceURL).Debug("Url")
+	metaServiceURL := viper.GetString("ec2InstanceMetaServiceURL")
+	log.WithField("ec2InstanceMetaUrl", metaServiceURL).Debug("Url")
 	resp, err := http.Get(metaServiceURL)
 	if err != nil {
 		return "", err
