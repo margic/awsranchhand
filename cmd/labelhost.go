@@ -17,13 +17,14 @@
 package cmd
 
 import (
-	"fmt"
+	"errors"
 	"strings"
 
 	"bytes"
 	"encoding/json"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/rancher/go-rancher/client"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -47,17 +48,26 @@ var labelhostCmd = &cobra.Command{
 				host id should be the rancher host id. Label is supplied
 				as key and value flags`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("labelhost called")
+		log.Info("labelhost called")
 		req := labelRequest{
-			Host:  viper.GetString("host"),
-			Key:   viper.GetString("key"),
-			Value: viper.GetString("value"),
+			Host:   viper.GetString("host"),
+			Key:    viper.GetString("key"),
+			Value:  viper.GetString("value"),
+			Add:    viper.GetBool("add"),
+			Remove: viper.GetBool("remove"),
 		}
 		err := req.Validate()
 		if err != nil {
 			log.Error(err)
 		}
-		labelHost(req)
+		if req.Add && req.Remove {
+			log.Error("Cannot add and remove a label at same time")
+		} else {
+			err = labelHost(req)
+			if err != nil {
+				log.Error(err)
+			}
+		}
 	},
 }
 
@@ -72,46 +82,78 @@ func init() {
 	labelhostCmd.Flags().String("host", "", "Rancher host id")
 	labelhostCmd.Flags().String("key", "", "Rancher host label key")
 	labelhostCmd.Flags().String("value", "", "Rancher host label value")
+	labelhostCmd.Flags().BoolP("add", "a", false, "Add a label to a host")
+	labelhostCmd.Flags().BoolP("remove", "r", false, "Remove a label from a host")
+
 	viper.BindPFlags(labelhostCmd.Flags())
 }
 
-func labelHost(r labelRequest) {
+func lookupHost(r labelRequest) (host *client.Host, err error) {
 	rc, err := GetRancherClient()
 	if err != nil {
-		log.Error("Error getting client: ", err)
-		return
+		return nil, err
 	}
 
-	host, err := rc.Host.ById(r.Host)
+	host, err = rc.Host.ById(r.Host)
 	if err != nil {
-		log.Error("Error checking if host exists: ", err)
-		return
+		return nil, err
 	}
 
-	// get the host link for update later
-	hostLinks := host.Links
-	// use this link to update the host with new labels
-	selfLink := hostLinks["self"]
+	if host == nil {
+		return nil, errors.New("Host " + r.Host + " not found")
+	}
 
 	log.WithFields(log.Fields{
 		"ID":     r.Host,
 		"State":  host.State,
 		"Labels": host.Labels,
-		"Link":   selfLink,
 	}).Debug("Found host")
+	return host, nil
+}
 
-	// If this code breaks this is likely where you should be looking!
-	if !strings.Contains(selfLink, "projects") {
-		// this is the account link not the project link.
-		selfLink = strings.Replace(selfLink, "hosts", "projects/"+host.AccountId+"/hosts", 1)
+func listLabels(host *client.Host) map[string]interface{} {
+	labels := host.Labels
+
+	if len(labels) > 0 {
+		log.WithField("Labels", labels).Info("Current Labels")
+	} else {
+		log.Info("Host " + host.Id + " has no labels")
+	}
+	return labels
+}
+
+func labelHost(r labelRequest) error {
+	host, err := lookupHost(r)
+	if err != nil {
+		return err
+	}
+	labels := listLabels(host)
+
+	if !r.Add && !r.Remove {
+		// only a  list required just return after listing
+		log.Info("Neither -a or -r flags passed. Listing labels only. Exiting")
+		return nil
 	}
 
-	labels := host.Labels
-	labels[r.Key] = r.Value
-	log.Debug(labels)
+	if r.Add {
+		if len(r.Key) == 0 || len(r.Value) == 0 {
+			return errors.New("To add a key and value must be specified")
+		}
+		labels[r.Key] = r.Value
+	}
 
+	if r.Remove {
+		if len(r.Key) == 0 {
+			return errors.New("To remove a key must be specified")
+		}
+		if labels[r.Key] == nil {
+			return errors.New("Key " + r.Key + " not a current label for host " + r.Host)
+		}
+		delete(labels, r.Key)
+	}
+
+	// make the request map to get the json from for update request
 	l := make(map[string]string)
-
 	for key, value := range labels {
 		l[key] = value.(string)
 	}
@@ -123,16 +165,29 @@ func labelHost(r labelRequest) {
 	ub, _ := json.Marshal(lu)
 	log.Debug(string(ub))
 
+	// get the host link for update later
+	hostLinks := host.Links
+	// use this link to update the host with new labels
+	selfLink := hostLinks["self"]
+	// If this code breaks this is likely where you should be looking!
+	if !strings.Contains(selfLink, "projects") {
+		// this is the account link not the project link.
+		selfLink = strings.Replace(selfLink, "hosts", "projects/"+host.AccountId+"/hosts", 1)
+	}
+
 	err = doRancherPut(selfLink, bytes.NewReader(ub))
 	if err != nil {
 		log.Error("Error updating host with labels: ", err)
 	}
+	return nil
 }
 
 type labelRequest struct {
-	Host  string `valid:"required"`
-	Key   string `valid:"required"`
-	Value string `valid:"required"`
+	Host   string `valid:"required"`
+	Key    string
+	Value  string
+	Add    bool
+	Remove bool
 }
 
 type labelUpdate struct {
