@@ -16,6 +16,7 @@ package cmd
 
 import (
 	log "github.com/Sirupsen/logrus"
+	"github.com/rancher/go-rancher/client"
 	"github.com/spf13/cobra"
 )
 
@@ -32,6 +33,7 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: Work your own magic here
 		log.Debug("listhosts")
+		listHosts()
 	},
 }
 
@@ -47,5 +49,26 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// listhostsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
 
+func listHosts() {
+	rc, err := GetRancherClient()
+	if err != nil {
+		log.Error("Error creating client: ", err)
+		return
+	}
+	hostsResponse, err := rc.Host.List(&client.ListOpts{})
+	if err != nil {
+		log.Error("List host error: ", err)
+		return
+	}
+	hosts := hostsResponse.Data
+
+	for _, host := range hosts {
+		log.WithFields(log.Fields{
+			"ID":   host.Id,
+			"Info": host.Info,
+			"Data": host.Data,
+		}).Info("Host")
+	}
 }

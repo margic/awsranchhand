@@ -19,7 +19,8 @@ builddocker: cleandocker
 	docker cp $(BUILD_NAME):/go/bin/awsranchhand ./awsranchhand
 	chmod 755 ./awsranchhand
 	docker build --no-cache --rm=true -t $(IMG) -f Dockerfile.static .
-	docker rm -v $(BUILD_NAME)
+	# Removed cause circle docker support sucks
+	# docker rm -v $(BUILD_NAME)
 	rm ./awsranchhand
 
 tagdocker: builddocker

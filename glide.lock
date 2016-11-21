@@ -1,8 +1,12 @@
-hash: c2f244cbdd1272a505d4b7440a75dd77f230beab4c8434596c39b27f78782fbf
-updated: 2016-11-16T11:59:16.594817026-07:00
+hash: 14bb64731897888b169b50b497daf5cfb968f53728faeaa961e51b7374029eed
+updated: 2016-11-17T14:43:21.691152173-07:00
 imports:
+- name: github.com/abice/gencheck
+  version: 7eaa8b9e35298f4a45a41f5ecbcd9b7a77d33457
 - name: github.com/fsnotify/fsnotify
   version: fd9ec7deca8bf46ecd2a795baaacf2b3a9be1197
+- name: github.com/gorilla/websocket
+  version: e8f0f8aaa98dfb6586cbdf2978d511e3199a960a
 - name: github.com/hashicorp/hcl
   version: c3e054bfd4dcf77b9965ed2b79b22afa2f41d4eb
   subpackages:
@@ -24,6 +28,12 @@ imports:
   version: df1e16fde7fc330a0ca68167c23bf7ed6ac31d6d
 - name: github.com/pelletier/go-toml
   version: 45932ad32dfdd20826f5671da37a5f3ce9f26a8d
+- name: github.com/pkg/errors
+  version: 248dadf4e9068a0b3e79f02ed0a610d935de5302
+- name: github.com/rancher/go-rancher
+  version: af955cd2925739b199df4077fafaddfaa4834a2f
+  subpackages:
+  - client
 - name: github.com/Sirupsen/logrus
   version: d26492970760ca5d33129d2d799e34be5c4782eb
 - name: github.com/spf13/afero
@@ -47,6 +57,8 @@ imports:
 - name: golang.org/x/text
   version: a263ba8db058568bb9beba166777d9c9dbe75d68
   subpackages:
+  - language
+  - internal/tag
   - transform
   - unicode/norm
 - name: gopkg.in/yaml.v2

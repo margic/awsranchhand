@@ -24,6 +24,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+const rKey string = "rancherKey"
+const rSecret string = "rancherSecret"
+const rURL string = "rancherURL"
+
 var cfgFile string
 
 // RootCmd represents the base command when called without any subcommands
@@ -51,8 +55,9 @@ func init() {
 	// Cobra supports Persistent Flags, which, if defined here,
 	// will be global for your application.
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ranchhand.yml)")
-	RootCmd.PersistentFlags().StringP("rancherKey", "k", "", "Rancher API key")
-	RootCmd.PersistentFlags().StringP("rancherSecret", "s", "", "Rancher api secret")
+	RootCmd.PersistentFlags().String(rKey, "", "Rancher API key")
+	RootCmd.PersistentFlags().String(rSecret, "", "Rancher API secret")
+	RootCmd.PersistentFlags().String(rURL, "", "Rancher API url")
 	viper.BindPFlags(RootCmd.PersistentFlags())
 	//viper.BindPFlag("rancherKey", RootCmd.Flags().Lookup("rancherKey"))
 	//viper.BindPFlag("rancherSecret", RootCmd.Flags().Lookup("rancherSecret"))
@@ -72,9 +77,9 @@ func initConfig() {
 	viper.AddConfigPath("$HOME/.ranchhand")
 	viper.AddConfigPath("./")
 
-	viper.BindEnv("rancherKey", "RANCHER_KEY") // need to bind name key to env KEY
-	viper.BindEnv("rancherSecret", "RANCHER_SECRET")
-	viper.BindEnv("url", "RANCHER_URL")
+	viper.BindEnv(rKey, "RANCHER_KEY") // need to bind name key to env KEY
+	viper.BindEnv(rSecret, "RANCHER_SECRET")
+	viper.BindEnv(rURL, "RANCHER_URL")
 	viper.BindEnv("logginglevel", "LOGGING_LEVEL")
 
 	// If a config file is found, read it in.
@@ -91,8 +96,8 @@ func initConfig() {
 		log.Debug("Using config file: ", viper.ConfigFileUsed())
 	}
 
-	log.Debug("Rancher Key: ", viper.GetString("rancherKey"))
-	rancherSecret := viper.GetString("rancherSecret")
+	log.Debug("Rancher Key: ", viper.GetString(rKey))
+	rancherSecret := viper.GetString(rSecret)
 	// mask the key for debug output
 	l := len(rancherSecret) - 10
 	if l > 0 {
