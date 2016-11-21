@@ -9,8 +9,9 @@ buildgo:
 
 cleandocker:
 	-rm awsranchhand
-	-docker rm -v $(BUILD_NAME)
-	-docker rmi -f $(IMG)
+	# Removed cause circle docker support sucks
+	# -docker rm -v $(BUILD_NAME)
+	# -docker rmi -f $(IMG)
 
 
 builddocker: cleandocker
