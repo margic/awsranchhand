@@ -34,15 +34,15 @@ var labelec2instanceCmd = &cobra.Command{
 		log.Info("labelec2instance called")
 		instanceID, err := lookupInstanceID()
 		if err != nil {
-			log.Error("Unable to lookup instanceID from ec2 meta service")
+			log.Error("Unable to lookup instanceID from ec2 meta service: ", err)
 		}
 		hostID, err := lookupRancherHostID()
 		if err != nil {
-			log.Error("Unable to lookup rancher host id from rancher meta service")
+			log.Error("Unable to lookup rancher host id from rancher meta service: ", err)
 		}
 		req := labelRequest{
 			Host:   "1h" + hostID,
-			Key:    "isntance-id",
+			Key:    "instance-id",
 			Value:  instanceID,
 			Add:    true,
 			Remove: false,
