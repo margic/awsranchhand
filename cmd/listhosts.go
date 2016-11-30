@@ -52,7 +52,7 @@ func init() {
 }
 
 func listHosts() {
-	rc, err := GetRancherClient()
+	rc, err := getRancherClient()
 	if err != nil {
 		log.Error("Error creating client: ", err)
 		return

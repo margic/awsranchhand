@@ -13,7 +13,7 @@ import (
 )
 
 // GetRancherClient Returns a rancher client based on viper config
-func GetRancherClient() (rc *client.RancherClient, err error) {
+func getRancherClient() (rc *client.RancherClient, err error) {
 	ro := rancherOpts{
 		URL:       viper.GetString(rURL),
 		AccessKey: viper.GetString(rKey),
@@ -76,4 +76,80 @@ func lookupRancherHostID() (instanceID string, err error) {
 		return "", err
 	}
 	return string(contents), nil
+}
+
+func getServiceByID(rc *client.RancherClient, stackName string, serviceName string) (*client.Service, error) {
+	log.WithField("serviceName", serviceName).Debug("Getting service ID")
+
+	// environment ID or Application Stack name as referred to in rancher ui
+	eID := ""
+
+	if stackName != "" {
+		// find the stack (environmnet id)
+		eList, err := rc.Environment.List(&client.ListOpts{
+			Filters: map[string]interface{}{
+				"name": stackName,
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		eData := eList.Data
+		if len(eData) != 1 {
+			return nil, NewServiceError("Application stack name not found or is not unique")
+		}
+		eID = eData[0].Id
+		log.WithFields(log.Fields{
+			"stackName": stackName,
+			"stackId":   eID,
+		}).Debug("Stack Found")
+	}
+
+	sFilter := map[string]interface{}{
+		"name": serviceName,
+	}
+	if eID != "" {
+		sFilter["environmentId"] = eID
+	}
+
+	sList, err := rc.Service.List(&client.ListOpts{
+		Filters: sFilter,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	sData := sList.Data
+	if len(sData) == 0 {
+		return nil, NewServiceError("Service not found")
+	}
+	if len(sData) > 1 {
+		return nil, NewServiceError("Serice name not unique try running with stack and service name flags")
+	}
+
+	svcID := sData[0].Id
+	log.WithFields(log.Fields{
+		"serviceName": serviceName,
+		"serviceId":   svcID,
+	}).Debug("Service Found")
+	// find the service by name
+	svc, err := rc.Service.ById(svcID)
+
+	return svc, err
+}
+
+// ServiceError common error that can occur when looking up services
+type ServiceError struct {
+	s string
+}
+
+func (e ServiceError) Error() string {
+	return e.s
+}
+
+// NewServiceError create a new service error
+func NewServiceError(msg string) ServiceError {
+	return ServiceError{
+		s: msg,
+	}
 }

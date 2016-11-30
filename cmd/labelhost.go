@@ -89,7 +89,7 @@ func init() {
 }
 
 func lookupHost(r labelRequest) (host *client.Host, err error) {
-	rc, err := GetRancherClient()
+	rc, err := getRancherClient()
 	if err != nil {
 		return nil, err
 	}
