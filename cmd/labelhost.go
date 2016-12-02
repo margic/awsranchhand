@@ -1,7 +1,7 @@
 //go:generate gencheck -f=labelhost.go
 
 // Package cmd provides rancher commands for supporting rancher in aws
-// Copyright © 2016 pmcrofts@margic.com
+// Copyright © 2016 Paul Crofts pmcrofts@margic.com
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

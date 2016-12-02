@@ -1,6 +1,6 @@
 //go:generate gencheck -f=waitforstate.go
 
-// Copyright © 2016 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2016 Paul Crofts pmcrofts@margic.com
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ var waitforstateCmd = &cobra.Command{
 	This command will wait for a service to be in a specified state and can
 	be used when automating deploy or upgrade steps.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Work your own magic here
 		log.Debug("waitforstate called")
+
 		err := waitforstate()
 		if err != nil {
 			log.Fatal(err)
@@ -44,17 +44,14 @@ var waitforstateCmd = &cobra.Command{
 }
 
 func init() {
+	log.Info("Command Init")
 	RootCmd.AddCommand(waitforstateCmd)
-
-	waitforstateCmd.Flags().StringP("stack", "k", "", "Name of the application stack")
-	waitforstateCmd.Flags().StringP("service", "s", "", "Name of service")
 	waitforstateCmd.Flags().DurationP("timeout", "t", 60*time.Second, "How long to wait for service state, default is 60s")
 	waitforstateCmd.Flags().StringP("state", "a", "", "State to wait for e.g. example ugraded, active")
 	viper.BindPFlags(waitforstateCmd.Flags())
 }
 
 func waitforstate() error {
-
 	r := waitrequest{
 		Stack:   viper.GetString("stack"),
 		Service: viper.GetString("service"),

@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/rancher/go-rancher/client"
@@ -152,4 +153,22 @@ func NewServiceError(msg string) ServiceError {
 	return ServiceError{
 		s: msg,
 	}
+}
+
+// updates a laucnch config environment map with flags provided
+func updateEnvironment(currentEnv map[string]interface{}, envFlags []string, clear bool) (newEnv map[string]interface{}) {
+	if clear {
+		currentEnv = make(map[string]interface{})
+	}
+	for _, e := range envFlags {
+		log.Debug(e)
+		key, value := splitEnv(e)
+		currentEnv[key] = value
+	}
+	return currentEnv
+}
+
+func splitEnv(envString string) (key string, value string) {
+	envs := strings.Split(envString, "=")
+	return envs[0], envs[1]
 }

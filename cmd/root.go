@@ -1,4 +1,4 @@
-// Copyright © 2016 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2016 Paul Crofts pmcrofts@margic.com
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,6 +58,8 @@ func init() {
 	RootCmd.PersistentFlags().String(rKey, "", "Rancher API key")
 	RootCmd.PersistentFlags().String(rSecret, "", "Rancher API secret")
 	RootCmd.PersistentFlags().String(rURL, "", "Rancher API url")
+	RootCmd.PersistentFlags().StringP("stack", "k", "", "Name of the application stack")
+	RootCmd.PersistentFlags().StringP("service", "s", "", "Name of service to upgrade")
 	viper.BindPFlags(RootCmd.PersistentFlags())
 	//viper.BindPFlag("rancherKey", RootCmd.Flags().Lookup("rancherKey"))
 	//viper.BindPFlag("rancherSecret", RootCmd.Flags().Lookup("rancherSecret"))
