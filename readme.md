@@ -23,4 +23,4 @@ Command params can be passed as environment variables or as flags.
 Environment variables:
 CATTLE_ACCESS_KEY - Rancher cattle key
 CATTLE_SECRET_KEY - Rancher secret
-CATTLE_URL - Rancher api url ie https://rancher.dev.aws.unicornmedia.com/v1
+CATTLE_URL - Rancher api url ie https://rancherhost.com/v1
