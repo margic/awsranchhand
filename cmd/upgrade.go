@@ -39,7 +39,6 @@ var upgradeCmd = &cobra.Command{
 }
 
 func init() {
-	log.Info("Command Init")
 	RootCmd.AddCommand(upgradeCmd)
 	upgradeCmd.Flags().StringP("image", "i", "", "Optional - replace the docker image for upgraded service")
 	upgradeCmd.Flags().BoolP("nostartfirst", "n", false, "Start the new service before stopping the old one")

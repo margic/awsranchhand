@@ -44,7 +44,6 @@ var waitforstateCmd = &cobra.Command{
 }
 
 func init() {
-	log.Info("Command Init")
 	RootCmd.AddCommand(waitforstateCmd)
 	waitforstateCmd.Flags().DurationP("timeout", "t", 60*time.Second, "How long to wait for service state, default is 60s")
 	waitforstateCmd.Flags().StringP("state", "a", "", "State to wait for e.g. example ugraded, active")

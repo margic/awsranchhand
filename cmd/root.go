@@ -24,15 +24,15 @@ import (
 	"github.com/spf13/viper"
 )
 
-const rKey string = "rancherKey"
-const rSecret string = "rancherSecret"
-const rURL string = "rancherURL"
+const rKey string = "key"
+const rSecret string = "secret"
+const rURL string = "url"
 
 var cfgFile string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "ranchhand",
+	Use:   "awsranchhand",
 	Short: "Ranch hand helps out on the ranch",
 	Long:  `Ranch hand is a set of cli tools for supporting a rancher cluster`,
 	// Uncomment the following line if your bare application
@@ -60,12 +60,8 @@ func init() {
 	RootCmd.PersistentFlags().String(rURL, "", "Rancher API url")
 	RootCmd.PersistentFlags().StringP("stack", "k", "", "Name of the application stack")
 	RootCmd.PersistentFlags().StringP("service", "s", "", "Name of service to upgrade")
+	RootCmd.PersistentFlags().StringP("loggingLevel", "l", "INFO", "Logging level DEBUG, INFO etc.")
 	viper.BindPFlags(RootCmd.PersistentFlags())
-	//viper.BindPFlag("rancherKey", RootCmd.Flags().Lookup("rancherKey"))
-	//viper.BindPFlag("rancherSecret", RootCmd.Flags().Lookup("rancherSecret"))
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.
